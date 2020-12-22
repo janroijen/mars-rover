@@ -107,6 +107,14 @@ const Images = (rover) => {
     return `<h1>Loading... </h1>`;
   }
 
+  const error = store.getIn(["images", "error"])
+  if (error) {
+    return `
+      <h1>Error</h1>
+      <p>${error}</p>
+    `
+  }
+
   const roverInfo = store.getIn(["images", rover.toLowerCase()]);
   return `
     <div class="image-gallery">
@@ -130,7 +138,9 @@ const RoverInfo = (info) => {
         <div class="image-box">
             <p><span class="label">Status:</span> ${info.get("status")}</p>
             <p><span class="label">Launch:</span> ${info.get("launch_date")}</p>
-            <p><span class="label">Landing:</span> ${info.get("landing_date")}</p>
+            <p><span class="label">Landing:</span> ${info.get(
+              "landing_date"
+            )}</p>
             <p><span class="label">Photo:</span> ${info.get("photo_date")}</p>
         </div>
     `;
@@ -141,6 +151,10 @@ const RoverInfo = (info) => {
 const getImages = () => {
   fetch("http://localhost:3000/rovers")
     .then((res) => res.json())
+    .then((res) => {
+      console.log(res);
+      return res;
+    })
     .then((images) => updateStore({ images }))
     .then(() => rerender());
 };

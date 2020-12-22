@@ -44,6 +44,11 @@ async function handleRovers(req, res) {
     return fetch(path)
       .then((res) => res.json())
       .then((res) => {
+        if (res.error) {
+          results["error"] = res.error.message;
+          return;
+        }
+
         results[rover] = extractAPIRoverInfo(res);
       })
       .catch((err) => {
