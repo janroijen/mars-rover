@@ -66,12 +66,12 @@ const App = (state) => {
   `;
 };
 
-const Button = ({ label, active, action }) => {
+const Button = (style = "") => ({ label, active, action }) => {
   const id = randomId();
   const button = `
         <button
             id="${id}" 
-            class="btn${active ? " active" : ""}"
+            class="${style}${active ? " active" : ""}"
         >
             ${label}
         </button>
@@ -80,13 +80,15 @@ const Button = ({ label, active, action }) => {
   return button;
 };
 
+const StyledButton = Button("btn")
+
 const Menu = () => {
   const menu = `
         <div class="menu">
             ${store
               .get("rovers")
               .map((rover) =>
-                Button({
+                StyledButton({
                   label: rover,
                   active: store.get("selectedRover") === rover,
                   action: () => roverSelectionAction(rover),
@@ -121,17 +123,19 @@ const Images = (rover) => {
         ${RoverInfo(roverInfo)}
         ${roverInfo
           .get("photos")
-          .map((src) => Image({ src }))
+          .map((src) => StyledImage({ src }))
           .join("")}
     </div>
     `;
 };
 
-const Image = ({ src }) => {
+const Image = (style = "") => ({ src }) => {
   return `
-        <img class="image-box" src="${src}" />
+        <img class="${style}" src="${src}" />
     `;
 };
+
+const StyledImage = Image("image-box")
 
 const RoverInfo = (info) => {
   return `
@@ -151,10 +155,6 @@ const RoverInfo = (info) => {
 const getImages = () => {
   fetch("http://localhost:3000/rovers")
     .then((res) => res.json())
-    .then((res) => {
-      console.log(res);
-      return res;
-    })
     .then((images) => updateStore({ images }))
     .then(() => rerender());
 };
