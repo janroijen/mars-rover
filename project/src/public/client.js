@@ -1,11 +1,3 @@
-// let store = {
-//   user: { name: "Student" },
-//   apod: "",
-//   rovers: ["Curiosity", "Opportunity", "Spirit"],
-//   selectedRover: "Curiosity",
-//   eventHandlers: [],
-// };
-
 let store = Immutable.Map({
   rovers: Immutable.List(["Curiosity", "Opportunity", "Spirit"]),
   selectedRover: "Curiosity",
@@ -80,7 +72,7 @@ const Button = (style = "") => ({ label, active, action }) => {
   return button;
 };
 
-const StyledButton = Button("btn")
+const StyledButton = Button("btn");
 
 const Menu = () => {
   const menu = `
@@ -109,33 +101,55 @@ const Images = (rover) => {
     return `<h1>Loading... </h1>`;
   }
 
-  const error = store.getIn(["images", "error"])
+  const error = store.getIn(["images", "error"]);
   if (error) {
     return `
       <h1>Error</h1>
       <p>${error}</p>
-    `
+    `;
   }
 
   const roverInfo = store.getIn(["images", rover.toLowerCase()]);
+
+  addEventHandler("closeModal", "click", closeModal);
+
   return `
     <div class="image-gallery">
-        ${RoverInfo(roverInfo)}
-        ${roverInfo
-          .get("photos")
-          .map((src) => StyledImage({ src }))
-          .join("")}
+      ${RoverInfo(roverInfo)}
+      ${roverInfo
+        .get("photos")
+        .map((src) => StyledImage({ src }))
+        .join("")}
+        <div id="myModal" class="modal">
+          <span id="closeModal" class="close">&times;</span>
+          <img class="modal-content" id="modalImage">
+          <div id="caption"></div>
+        </div>
     </div>
     `;
 };
 
-const Image = (style = "") => ({ src }) => {
-  return `
-        <img class="${style}" src="${src}" />
-    `;
+const openModal = (src) => {
+  const modal = document.getElementById("myModal");
+  const modalImg = document.getElementById("modalImage");
+  modal.style.display = "block";
+  modalImg.src = src;
+  // captionText.innerHTML = this.alt;
 };
 
-const StyledImage = Image("image-box")
+const closeModal = () => {
+  console.log("Close modal");
+  document.getElementById("myModal").style.display = "none";
+};
+
+const Image = (style = "") => ({ src }) => {
+  const id = randomId();
+  const img = `<img id=${id} class="${style}" src="${src}" />`;
+  addEventHandler(id, "click", () => openModal(src));
+  return img;
+};
+
+const StyledImage = Image("image-box");
 
 const RoverInfo = (info) => {
   return `
